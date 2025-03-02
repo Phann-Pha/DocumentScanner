@@ -32,7 +32,7 @@ internal class ScanSurfaceView : FrameLayout
     {
         private const val TIME_POST_PICTURE = 1500L
         private const val DEFAULT_TIME_POST_PICTURE = 1500L
-        private const val IMAGE_ANALYSIS_SCALE_WIDTH = 400
+        private const val IMAGE_ANALYSIS_SCALE_WIDTH = 420
     }
     
     constructor(context: Context) : super(context)
@@ -127,9 +127,9 @@ internal class ScanSurfaceView : FrameLayout
     private fun setUseCases(viewFinder: PreviewView, scanCanvasView: ScanCanvasView)
     {
         preview = Preview.Builder()
-            .setTargetResolution(previewSize)
-            .build()
-            .also { it.surfaceProvider = viewFinder.surfaceProvider }
+                .setTargetResolution(previewSize)
+                .build()
+                .also { it.surfaceProvider = viewFinder.surfaceProvider }
         
         setImageCapture()
         
@@ -138,9 +138,9 @@ internal class ScanSurfaceView : FrameLayout
         val height = (width / aspectRatio).roundToInt()
         
         imageAnalysis = ImageAnalysis.Builder()
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .setTargetResolution(android.util.Size(width, height))
-            .build()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setTargetResolution(android.util.Size(width, height))
+                .build()
         
         imageAnalysis?.setAnalyzer(ContextCompat.getMainExecutor(context)) { image ->
             if (isAutoCaptureOn)
@@ -154,7 +154,8 @@ internal class ScanSurfaceView : FrameLayout
                     if (null != largestQuad)
                     {
                         drawLargestRect(largestQuad.contour, largestQuad.points, originalPreviewSize, scanCanvasView)
-                    } else
+                    }
+                    else
                     {
                         clearAndInvalidateCanvas(scanCanvasView)
                     }
@@ -164,7 +165,8 @@ internal class ScanSurfaceView : FrameLayout
                     listener.onError(ErrorScannerModel(ErrorMessage.DETECT_LARGEST_QUADRILATERAL_FAILED, e))
                     clearAndInvalidateCanvas(scanCanvasView)
                 }
-            } else
+            }
+            else
             {
                 clearAndInvalidateCanvas(scanCanvasView)
             }
@@ -189,7 +191,8 @@ internal class ScanSurfaceView : FrameLayout
         {
             scanCanvasView.clearShape()
             cancelAutoCapture()
-        } else
+        }
+        else
         {
             if (!isAutoCaptureScheduled)
             {
@@ -226,10 +229,10 @@ internal class ScanSurfaceView : FrameLayout
     {
         if (isCapturing) return
         cancelAutoCapture()
-        takePicture(view)
+        onTakePicture(view)
     }
     
-    fun takePicture(view: View)
+    fun onTakePicture(view: View)
     {
         listener.scanSurfaceShowProgress()
         isCapturing = true
@@ -264,7 +267,8 @@ internal class ScanSurfaceView : FrameLayout
         if (camera?.cameraInfo?.hasFlashUnit() == true)
         {
             listener.showFlash()
-        } else
+        }
+        else
         {
             listener.hideFlash()
         }
@@ -286,7 +290,8 @@ internal class ScanSurfaceView : FrameLayout
         {
             listener.showFlashModeOn()
             ImageCapture.FLASH_MODE_ON
-        } else
+        }
+        else
         {
             listener.showFlashModeOff()
             ImageCapture.FLASH_MODE_OFF

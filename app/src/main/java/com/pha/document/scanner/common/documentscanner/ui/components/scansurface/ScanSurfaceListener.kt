@@ -2,12 +2,13 @@ package com.pha.document.scanner.common.documentscanner.ui.components.scansurfac
 
 import com.pha.document.scanner.common.documentscanner.model.ErrorScannerModel
 
-internal interface ScanSurfaceListener {
+internal interface ScanSurfaceListener
+{
     fun scanSurfacePictureTaken()
     fun scanSurfaceShowProgress()
     fun scanSurfaceHideProgress()
     fun onError(error: ErrorScannerModel)
-
+    
     fun showFlash()
     fun hideFlash()
     fun showFlashModeOn()

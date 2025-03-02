@@ -187,7 +187,7 @@ internal class CameraScreenFragment : BaseFragment(), ScanSurfaceListener
     
     private fun takePhoto(view: View)
     {
-        view.findViewById<ScanSurfaceView>(R.id.scanSurfaceView).takePicture(view)
+        view.findViewById<ScanSurfaceView>(R.id.scanSurfaceView).onTakePicture(view)
     }
     
     private fun getScanActivity(): BaseDocumentScannerActivity

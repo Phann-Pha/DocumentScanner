@@ -57,7 +57,7 @@ internal class OpenCvNativeBridge
         return result
     }
     
-    fun getPoint(bitmap: Bitmap): MatOfPoint2f?
+    private fun getPoint(bitmap: Bitmap): MatOfPoint2f?
     {
         val src = bitmap.toMat()
         
@@ -108,12 +108,14 @@ internal class OpenCvNativeBridge
             val approx = MatOfPoint2f()
             Imgproc.approxPolyDP(c2f, approx, EPSILON_CONSTANT * peri, true)
             val points = approx.toArray()
+            
             // select biggest 4 angles polygon
             if (approx.rows() == ANGLES_NUMBER)
             {
                 val foundPoints: Array<Point> = sortPoints(points)
                 return Quadrilateral(approx, foundPoints)
-            } else if (approx.rows() == 5)
+            }
+            else if (approx.rows() == 5)
             {
                 // if document has a bent corner
                 var shortestDistance = Int.MAX_VALUE.toDouble()
@@ -144,29 +146,25 @@ internal class OpenCvNativeBridge
                     }
                 }
                 
-                val trianglePointWithHypotenuse: Point? = points.toList().minus(arrayListOf(shortestPoint1, shortestPoint2, diagonalPoint1, diagonalPoint2))[0]
+                val trianglePointWithHypotenuse: Point? = points.toList().minus(arrayListOf(shortestPoint1, shortestPoint2, diagonalPoint1, diagonalPoint2).toSet())[0]
                 
-                val newPoint = if (trianglePointWithHypotenuse!!.x > shortestPoint1!!.x && trianglePointWithHypotenuse.x > shortestPoint2!!.x &&
-                    trianglePointWithHypotenuse.y > shortestPoint1.y && trianglePointWithHypotenuse.y > shortestPoint2.y
-                )
+                val newPoint = if (trianglePointWithHypotenuse!!.x > shortestPoint1!!.x && trianglePointWithHypotenuse.x > shortestPoint2!!.x && trianglePointWithHypotenuse.y > shortestPoint1.y && trianglePointWithHypotenuse.y > shortestPoint2.y)
                 {
                     Point(min(shortestPoint1.x, shortestPoint2.x), min(shortestPoint1.y, shortestPoint2.y))
-                } else if (trianglePointWithHypotenuse.x < shortestPoint1.x && trianglePointWithHypotenuse.x < shortestPoint2!!.x &&
-                    trianglePointWithHypotenuse.y > shortestPoint1.y && trianglePointWithHypotenuse.y > shortestPoint2.y
-                )
+                }
+                else if (trianglePointWithHypotenuse.x < shortestPoint1.x && trianglePointWithHypotenuse.x < shortestPoint2!!.x && trianglePointWithHypotenuse.y > shortestPoint1.y && trianglePointWithHypotenuse.y > shortestPoint2.y)
                 {
                     Point(max(shortestPoint1.x, shortestPoint2.x), min(shortestPoint1.y, shortestPoint2.y))
-                } else if (trianglePointWithHypotenuse.x < shortestPoint1.x && trianglePointWithHypotenuse.x < shortestPoint2!!.x &&
-                    trianglePointWithHypotenuse.y < shortestPoint1.y && trianglePointWithHypotenuse.y < shortestPoint2.y
-                )
+                }
+                else if (trianglePointWithHypotenuse.x < shortestPoint1.x && trianglePointWithHypotenuse.x < shortestPoint2!!.x && trianglePointWithHypotenuse.y < shortestPoint1.y && trianglePointWithHypotenuse.y < shortestPoint2.y)
                 {
                     Point(max(shortestPoint1.x, shortestPoint2.x), max(shortestPoint1.y, shortestPoint2.y))
-                } else if (trianglePointWithHypotenuse.x > shortestPoint1.x && trianglePointWithHypotenuse.x > shortestPoint2!!.x &&
-                    trianglePointWithHypotenuse.y < shortestPoint1.y && trianglePointWithHypotenuse.y < shortestPoint2.y
-                )
+                }
+                else if (trianglePointWithHypotenuse.x > shortestPoint1.x && trianglePointWithHypotenuse.x > shortestPoint2!!.x && trianglePointWithHypotenuse.y < shortestPoint1.y && trianglePointWithHypotenuse.y < shortestPoint2.y)
                 {
                     Point(min(shortestPoint1.x, shortestPoint2.x), max(shortestPoint1.y, shortestPoint2.y))
-                } else
+                }
+                else
                 {
                     Point(0.0, 0.0)
                 }
@@ -218,11 +216,13 @@ internal class OpenCvNativeBridge
             Imgproc.convexHull(mContourList[i], tempHullIndices)
             mHullList.add(hull2Points(tempHullIndices, mContourList[i]))
         }
+        
         // Release mContourList as its job is done
         for (c in mContourList)
         {
             c.release()
         }
+        
         tempHullIndices.release()
         mHierarchy.release()
         if (mHullList.size != 0)
