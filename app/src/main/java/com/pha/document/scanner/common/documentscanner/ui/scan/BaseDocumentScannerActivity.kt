@@ -99,7 +99,7 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     private fun addFragmentToBackStack(fragment: Fragment, fragmentTag: String)
     {
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.zdcContent, fragment, fragmentTag)
+        fragmentTransaction.replace(R.id.Content, fragment, fragmentTag)
         if (supportFragmentManager.findFragmentByTag(fragmentTag) == null)
         {
             fragmentTransaction.addToBackStack(fragmentTag)
@@ -109,14 +109,14 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     
     internal fun finalScannerResult()
     {
-        findViewById<FrameLayout>(R.id.zdcContent).hide()
+        findViewById<FrameLayout>(R.id.Content).hide()
         compressFiles()
     }
     
     @OptIn(DelicateCoroutinesApi::class)
     private fun compressFiles()
     {
-        findViewById<ProgressView>(R.id.zdcProgressView).show()
+        findViewById<ProgressView>(R.id.ProgressView).show()
         GlobalScope.launch(Dispatchers.IO) {
             var croppedImageFile: File? = null
             croppedImage?.let {
@@ -154,7 +154,7 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
             
             val scannerResults = ScannerResults(originalImageFile, croppedImageFile, transformedImageFile)
             runOnUiThread {
-                findViewById<ProgressView>(R.id.zdcProgressView).hide()
+                findViewById<ProgressView>(R.id.ProgressView).hide()
                 shouldCallOnClose = false
                 supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 shouldCallOnClose = true
@@ -166,11 +166,11 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     internal fun addFragmentContentLayoutInternal()
     {
         val frameLayout = FrameLayout(activity)
-        frameLayout.id = R.id.zdcContent
+        frameLayout.id = R.id.Content
         addContentView(frameLayout, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         
         val progressView = ProgressView(activity)
-        progressView.id = R.id.zdcProgressView
+        progressView.id = R.id.ProgressView
         addContentView(progressView, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         
         progressView.hide()
