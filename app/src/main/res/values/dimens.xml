@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="polygon_dimens">32dp</dimen>
+    <dimen name="polygon_line_stroke_width">1dp</dimen>
+    <dimen name="point_padding">20dp</dimen>
+
+</resources>

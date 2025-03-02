@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DocumentScanner</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="auto">Auto</string>
+    <string name="manual">Manual</string>
+</resources>
