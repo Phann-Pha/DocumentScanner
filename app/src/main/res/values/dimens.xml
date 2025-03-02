@@ -3,6 +3,6 @@
 
     <dimen name="polygon_dimens">32dp</dimen>
     <dimen name="polygon_line_stroke_width">1dp</dimen>
-    <dimen name="point_padding">20dp</dimen>
+    <dimen name="point_padding">2dp</dimen>
 
 </resources>

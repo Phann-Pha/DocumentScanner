@@ -70,7 +70,7 @@ internal class OpenCvNativeBridge
         return largestRectangle?.contour?.scaleRectangle(1f / ratio)
     }
     
-    // patch from Udayraj123 (https://github.com/Udayraj123/LiveEdgeDetection)
+    // patch from (https://github.com/Udayraj123/LiveEdgeDetection)
     fun detectLargestQuadrilateral(src: Mat): Quadrilateral?
     {
         val destination = Mat()
@@ -85,11 +85,7 @@ internal class OpenCvNativeBridge
         
         Imgproc.threshold(destination, destination, CUTOFF_THRESHOLD, NORMALIZATION_MAX_VALUE, Imgproc.THRESH_TOZERO)
         
-        Imgproc.morphologyEx(
-            destination, destination, Imgproc.MORPH_CLOSE,
-            Mat(Size(CLOSE_KERNEL_SIZE, CLOSE_KERNEL_SIZE), CvType.CV_8UC1, Scalar(NORMALIZATION_MAX_VALUE)),
-            Point(-1.0, -1.0), 1
-        )
+        Imgproc.morphologyEx(destination, destination, Imgproc.MORPH_CLOSE, Mat(Size(CLOSE_KERNEL_SIZE, CLOSE_KERNEL_SIZE), CvType.CV_8UC1, Scalar(NORMALIZATION_MAX_VALUE)), Point(-1.0, -1.0), 1)
         
         val largestContour: List<MatOfPoint>? = findLargestContours(destination)
         if (null != largestContour)
