@@ -6,10 +6,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import com.pha.document.scanner.R
 import com.pha.document.scanner.common.documentscanner.common.extensions.yuvToRgba
@@ -73,7 +75,7 @@ internal class ScanSurfaceView : FrameLayout
         viewFinder.post {
             viewFinder.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
             previewSize = android.util.Size(viewFinder.width, viewFinder.height)
-            openCamera(viewFinder, scanCanvasView)
+            openCamera(viewFinder, scanCanvasView, view)
         }
     }
     
@@ -82,7 +84,7 @@ internal class ScanSurfaceView : FrameLayout
         scanCanvasView.clearShape()
     }
     
-    private fun openCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView)
+    private fun openCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, view: View)
     {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         
@@ -91,7 +93,7 @@ internal class ScanSurfaceView : FrameLayout
             
             try
             {
-                bindCamera(viewFinder, scanCanvasView)
+                bindCamera(viewFinder, scanCanvasView, view)
                 checkIfFlashIsPresent()
             }
             catch (e: Exception)
@@ -101,11 +103,11 @@ internal class ScanSurfaceView : FrameLayout
         }, ContextCompat.getMainExecutor(context))
     }
     
-    private fun bindCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView)
+    private fun bindCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, view: View)
     {
         cameraProvider?.unbindAll()
         camera = null
-        setUseCases(viewFinder, scanCanvasView)
+        setUseCases(viewFinder, scanCanvasView, view)
     }
     
     private fun setImageCapture()
@@ -124,8 +126,10 @@ internal class ScanSurfaceView : FrameLayout
         cameraProvider?.unbind(imageAnalysis)
     }
     
-    private fun setUseCases(viewFinder: PreviewView, scanCanvasView: ScanCanvasView)
+    private fun setUseCases(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, view: View)
     {
+        val textInstruction = view.findViewById<TextView>(R.id.textInstruction)
+        
         preview = Preview.Builder()
                 .setTargetResolution(previewSize)
                 .build()
@@ -153,22 +157,28 @@ internal class ScanSurfaceView : FrameLayout
                     mat.release()
                     if (null != largestQuad)
                     {
-                        drawLargestRect(largestQuad.contour, largestQuad.points, originalPreviewSize, scanCanvasView)
+                        drawLargestRect(largestQuad.contour, largestQuad.points, originalPreviewSize, scanCanvasView, view)
                     }
                     else
                     {
-                        clearAndInvalidateCanvas(scanCanvasView)
+                        textInstruction.isVisible = true
+                        textInstruction.text = "No Document Detected!"
+                        clearAndInvalidateCanvas(scanCanvasView) // when largestQuad null
                     }
                 }
                 catch (e: Exception)
                 {
+                    textInstruction.isVisible = true
+                    textInstruction.text = "Error Detected Document!"
                     listener.onError(ErrorScannerModel(ErrorMessage.DETECT_LARGEST_QUADRILATERAL_FAILED, e))
-                    clearAndInvalidateCanvas(scanCanvasView)
+                    clearAndInvalidateCanvas(scanCanvasView) // when detect largest quadrilateral
                 }
             }
             else
             {
-                clearAndInvalidateCanvas(scanCanvasView)
+                textInstruction.isVisible = true
+                textInstruction.text = "Auto Capture Disabled!"
+                clearAndInvalidateCanvas(scanCanvasView) // when auto capture off
             }
             image.close()
         }
@@ -176,7 +186,7 @@ internal class ScanSurfaceView : FrameLayout
         camera = cameraProvider!!.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis, imageCapture)
     }
     
-    private fun drawLargestRect(approx: MatOfPoint2f, points: Array<Point>, stdSize: Size, scanCanvasView: ScanCanvasView)
+    private fun drawLargestRect(approx: MatOfPoint2f, points: Array<Point>, stdSize: Size, scanCanvasView: ScanCanvasView, view: View)
     {
         // Attention: axis are swapped
         val previewWidth = stdSize.height.toFloat()
@@ -190,19 +200,22 @@ internal class ScanSurfaceView : FrameLayout
         if (imgDetectionPropsObj.isNotValidImage(approx))
         {
             scanCanvasView.clearShape()
+            view.findViewById<TextView>(R.id.textInstruction).isVisible = false
             cancelAutoCapture()
         }
         else
         {
             if (!isAutoCaptureScheduled)
             {
-                scheduleAutoCapture(scanCanvasView)
+                view.findViewById<TextView>(R.id.textInstruction).isVisible = true
+                view.findViewById<TextView>(R.id.textInstruction).text = "Dun move your camera"
+                scheduleAutoCapture(scanCanvasView, view)
             }
             scanCanvasView.showShape(previewWidth, previewHeight, points)
         }
     }
     
-    private fun scheduleAutoCapture(scanCanvasView: ScanCanvasView)
+    private fun scheduleAutoCapture(scanCanvasView: ScanCanvasView, view: View)
     {
         isAutoCaptureScheduled = true
         millisLeft = 0L
@@ -219,6 +232,9 @@ internal class ScanSurfaceView : FrameLayout
             override fun onFinish()
             {
                 isAutoCaptureScheduled = false
+                val textInstruction = view.findViewById<TextView>(R.id.textInstruction)
+                textInstruction.isVisible = true
+                textInstruction.text = "Processing Detected Document!"
                 autoCapture(scanCanvasView)
             }
         }
@@ -255,7 +271,7 @@ internal class ScanSurfaceView : FrameLayout
                     
                     unbindCamera()
                     
-                    clearAndInvalidateCanvas(view.findViewById(R.id.scanCanvasView))
+                    clearAndInvalidateCanvas(view.findViewById(R.id.scanCanvasView)) // when saved document
                     listener.scanSurfacePictureTaken()
                     postDelayed({ isCapturing = false }, TIME_POST_PICTURE)
                 }
