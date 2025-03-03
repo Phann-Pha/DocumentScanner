@@ -58,10 +58,10 @@ internal class ImageDetectionProperties(
     private fun isDetectedAreaBelowLimits(): Boolean
     {
         return !(previewWidth / previewHeight >= 1 &&
-                resultWidth.toDouble() / resultHeight.toDouble() >= 0.6 &&
-                resultHeight.toDouble() >= 0.4 * previewHeight ||
+                resultWidth.toDouble() / resultHeight.toDouble() >= 0.45 &&
+                resultHeight.toDouble() >= 0.3 * previewHeight ||
                 previewHeight / previewWidth >= 1 &&
-                resultHeight.toDouble() / resultWidth.toDouble() >= 0.6 &&
-                resultWidth.toDouble() >= 0.4 * previewWidth)
+                resultHeight.toDouble() / resultWidth.toDouble() >= 0.45 &&
+                resultWidth.toDouble() >= 0.3 * previewWidth)
     }
 }
