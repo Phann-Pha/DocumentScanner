@@ -42,6 +42,16 @@ internal class CroppingImageManager : Fragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        
+        onSyneImageCaptured()
+        binding.holderImageView.post {
+            initializeCropping()
+        }
+        onInitEventClickListener()
+    }
+    
+    private fun onSyneImageCaptured()
+    {
         val sourceBitmap = BitmapFactory.decodeFile(getScanActivity().originalImageFile.absolutePath)
         if (sourceBitmap != null)
         {
@@ -52,8 +62,6 @@ internal class CroppingImageManager : Fragment()
             onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_IMAGE))
             Handler(Looper.getMainLooper()).post { closeFragment() }
         }
-        binding.holderImageView.post { initializeCropping() }
-        onInitEventClickListener()
     }
     
     private fun getScanActivity(): BaseDocumentScannerActivity

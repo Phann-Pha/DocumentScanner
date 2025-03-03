@@ -39,7 +39,7 @@ internal class ScanSurfaceView : FrameLayout
     {
         private const val TIME_POST_PICTURE = 1500L
         private const val DEFAULT_TIME_POST_PICTURE = 1500L
-        private const val IMAGE_ANALYSIS_SCALE_WIDTH = 340
+        private const val IMAGE_ANALYSIS_SCALE_WIDTH = 400
     }
     
     constructor(context: Context) : super(context)
@@ -262,7 +262,6 @@ internal class ScanSurfaceView : FrameLayout
                     listener.scanSurfaceHideProgress()
                     
                     unbindCamera()
-                    
                     listener.scanSurfacePictureTaken()
                     postDelayed({ isCapturing = false }, TIME_POST_PICTURE)
                 }

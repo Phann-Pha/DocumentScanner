@@ -34,7 +34,7 @@ internal class CameraPreviewManager : Fragment(), ScanSurfaceListener
         fun newInstance(): CameraPreviewManager = CameraPreviewManager()
     }
     
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private var resultGalleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK)
         {
             try
@@ -47,7 +47,7 @@ internal class CameraPreviewManager : Fragment(), ScanSurfaceListener
                     {
                         getScanActivity().reInitOriginalImageFile()
                         getScanActivity().originalImageFile = File(realPath)
-                        startCroppingProcess()
+                        startCroppingProcess() // start cropping image, from launcher gallery result
                     }
                     else
                     {
@@ -186,7 +186,7 @@ internal class CameraPreviewManager : Fragment(), ScanSurfaceListener
         val photoPickerIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         photoPickerIntent.addCategory(Intent.CATEGORY_OPENABLE)
         photoPickerIntent.type = "image/*"
-        resultLauncher.launch(photoPickerIntent)
+        resultGalleryLauncher.launch(photoPickerIntent)
     }
     
     override fun scanSurfacePictureTaken()

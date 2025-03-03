@@ -46,24 +46,28 @@ internal object FileUriUtils
                     if (split.size > 1)
                     {
                         Environment.getExternalStorageDirectory().toString() + "/" + split[1]
-                    } else
+                    }
+                    else
                     {
                         Environment.getExternalStorageDirectory().toString() + "/"
                     }
                     
                     // This is for checking SD Card
-                } else
+                }
+                else
                 {
                     val path = "storage" + "/" + docId.replace(":", "/")
                     if (File(path).exists())
                     {
                         path
-                    } else
+                    }
+                    else
                     {
                         "/storage/sdcard/" + split[1]
                     }
                 }
-            } else if (isDownloadsDocument(uri))
+            }
+            else if (isDownloadsDocument(uri))
             {
                 val fileName = getFilePath(context, uri)
                 if (fileName != null)
@@ -76,7 +80,8 @@ internal object FileUriUtils
                     Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
                 )
                 return getDataColumn(context, contentUri, null, null)
-            } else if (isMediaDocument(uri))
+            }
+            else if (isMediaDocument(uri))
             {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -86,10 +91,12 @@ internal object FileUriUtils
                 if ("image" == type)
                 {
                     contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                } else if ("video" == type)
+                }
+                else if ("video" == type)
                 {
                     contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                } else if ("audio" == type)
+                }
+                else if ("audio" == type)
                 {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 }
@@ -100,12 +107,13 @@ internal object FileUriUtils
                 return getDataColumn(context, contentUri, selection, selectionArgs)
             } // MediaProvider
             // DownloadsProvider
-        } else if ("content".equals(uri.scheme!!, ignoreCase = true))
+        }
+        else if ("content".equals(uri.scheme!!, ignoreCase = true))
         {
-            
             // Return the remote address
             return if (isGooglePhotosUri(uri)) uri.lastPathSegment else getDataColumn(context, uri, null, null)
-        } else if ("file".equals(uri.scheme!!, ignoreCase = true))
+        }
+        else if ("file".equals(uri.scheme!!, ignoreCase = true))
         {
             return uri.path
         } // File

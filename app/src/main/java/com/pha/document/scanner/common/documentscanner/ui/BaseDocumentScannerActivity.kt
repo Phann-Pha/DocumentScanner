@@ -57,6 +57,7 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
         activity = this
+        
         val sessionDocumentManager = DocumentSessionManager(activity)
         imageType = sessionDocumentManager.onGetImageType()
         imageSize = sessionDocumentManager.onGetImageSize()
@@ -66,8 +67,8 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     
     internal fun reInitOriginalImageFile()
     {
-        originalImageFile = File(filesDir, "$ORIGINAL_IMAGE_NAME.${imageType.extension()}")
-        originalImageFile.delete()
+        originalImageFile = File(filesDir, "$ORIGINAL_IMAGE_NAME.${imageType.extension()}") // re-init image file
+        originalImageFile.delete() // delete file if exists
     }
     
     private fun showCameraScreen()
