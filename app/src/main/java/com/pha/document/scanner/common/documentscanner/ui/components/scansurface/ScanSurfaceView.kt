@@ -72,11 +72,12 @@ internal class ScanSurfaceView : FrameLayout
     {
         val viewFinder = view.findViewById<PreviewView>(R.id.viewFinder)
         val scanCanvasView = view.findViewById<ScanCanvasView>(R.id.scanCanvasView)
+        val textInstruction = view.findViewById<TextView>(R.id.textInstruction)
         
         viewFinder.post {
             viewFinder.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
             previewSize = android.util.Size(viewFinder.width, viewFinder.height)
-            openCamera(viewFinder, scanCanvasView, view)
+            openCamera(viewFinder, scanCanvasView, textInstruction)
         }
     }
     
@@ -85,7 +86,7 @@ internal class ScanSurfaceView : FrameLayout
         scanCanvasView.clearShape()
     }
     
-    private fun openCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, view: View)
+    private fun openCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, textInstruction: TextView)
     {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         
@@ -94,7 +95,7 @@ internal class ScanSurfaceView : FrameLayout
             
             try
             {
-                bindCamera(viewFinder, scanCanvasView, view)
+                bindCamera(viewFinder, scanCanvasView, textInstruction)
                 checkIfFlashIsPresent()
             }
             catch (e: Exception)
@@ -104,11 +105,11 @@ internal class ScanSurfaceView : FrameLayout
         }, ContextCompat.getMainExecutor(context))
     }
     
-    private fun bindCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, view: View)
+    private fun bindCamera(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, textInstruction: TextView)
     {
         cameraProvider?.unbindAll()
         camera = null
-        setUseCases(viewFinder, scanCanvasView, view)
+        setUseCases(viewFinder, scanCanvasView, textInstruction)
     }
     
     private fun setImageCapture()
@@ -128,10 +129,8 @@ internal class ScanSurfaceView : FrameLayout
     }
     
     @SuppressLint("SetTextI18n")
-    private fun setUseCases(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, view: View)
+    private fun setUseCases(viewFinder: PreviewView, scanCanvasView: ScanCanvasView, textInstruction: TextView)
     {
-        val textInstruction = view.findViewById<TextView>(R.id.textInstruction)
-        
         preview = Preview.Builder()
                 .setTargetResolution(previewSize)
                 .build()
@@ -159,7 +158,7 @@ internal class ScanSurfaceView : FrameLayout
                     mat.release()
                     if (null != largestQuad)
                     {
-                        drawLargestRect(largestQuad.contour, largestQuad.points, originalPreviewSize, scanCanvasView, view)
+                        drawLargestRect(largestQuad.contour, largestQuad.points, originalPreviewSize, scanCanvasView, textInstruction)
                     }
                     else
                     {
@@ -171,6 +170,7 @@ internal class ScanSurfaceView : FrameLayout
                 catch (e: Exception)
                 {
                     textInstruction.isVisible = false
+                    textInstruction.text = "Cannot Detect Document"
                     listener.onError(ErrorScannerModel(ErrorMessage.DETECT_LARGEST_QUADRILATERAL_FAILED, e))
                     clearAndInvalidateCanvas(scanCanvasView) // when detect largest quadrilateral
                 }
@@ -178,7 +178,7 @@ internal class ScanSurfaceView : FrameLayout
             else
             {
                 textInstruction.isVisible = true
-                textInstruction.text = "Auto Capture Disabled!"
+                textInstruction.text = "Auto Capture Disabled"
                 clearAndInvalidateCanvas(scanCanvasView) // when auto capture off
             }
             image.close()
@@ -187,10 +187,8 @@ internal class ScanSurfaceView : FrameLayout
         camera = cameraProvider!!.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis, imageCapture)
     }
     
-    private fun drawLargestRect(approx: MatOfPoint2f, points: Array<Point>, stdSize: Size, scanCanvasView: ScanCanvasView, view: View)
+    private fun drawLargestRect(approx: MatOfPoint2f, points: Array<Point>, stdSize: Size, scanCanvasView: ScanCanvasView, textInstruction: TextView)
     {
-        val textInstruction = view.findViewById<TextView>(R.id.textInstruction)
-        
         // Attention: axis are swapped
         val previewWidth = stdSize.height.toFloat()
         val previewHeight = stdSize.width.toFloat()
