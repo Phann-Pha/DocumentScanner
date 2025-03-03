@@ -1,4 +1,4 @@
-package com.pha.document.scanner.common.documentscanner.ui.components
+package com.pha.document.scanner.common.documentscanner.model
 
 import org.opencv.core.MatOfPoint2f
 import org.opencv.core.Point

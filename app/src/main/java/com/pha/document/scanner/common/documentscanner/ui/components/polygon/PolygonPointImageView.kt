@@ -8,14 +8,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import com.pha.document.scanner.R
 
-internal class PolygonPointImageView @JvmOverloads constructor(
-    context: Context,
-    private val polygonView: PolygonView? = null,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatImageView(context, attrs, defStyleAttr)
+internal class PolygonPointImageView @JvmOverloads constructor(context: Context, private val polygonView: PolygonView? = null, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : AppCompatImageView(context, attrs, defStyleAttr)
 {
-    
     private var downPoint = PointF()
     private var startPoint = PointF()
     
@@ -58,8 +52,8 @@ internal class PolygonPointImageView @JvmOverloads constructor(
         return true
     }
     
-    // Because we call this from onTouchEvent, this code will be executed for both
-    // normal touch events and for when the system calls this using Accessibility
+     /** Because we call this from onTouchEvent, this code will be executed for both
+     normal touch events and for when the system calls this using Accessibility */
     override fun performClick(): Boolean
     {
         super.performClick()

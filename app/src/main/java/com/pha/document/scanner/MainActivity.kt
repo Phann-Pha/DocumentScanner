@@ -4,12 +4,12 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
-import com.pha.document.scanner.databinding.ActivityMainBinding
-import com.pha.document.scanner.common.documentscanner.BaseScannerActivity
 import com.pha.document.scanner.common.documentscanner.model.ErrorScannerModel
 import com.pha.document.scanner.common.documentscanner.model.ScannerResults
+import com.pha.document.scanner.common.documentscanner.ui.BaseDocumentScannerActivity
+import com.pha.document.scanner.databinding.ActivityMainBinding
 
-class MainActivity : BaseScannerActivity()
+class MainActivity : BaseDocumentScannerActivity()
 {
     private lateinit var activity: Activity
     private lateinit var binding: ActivityMainBinding

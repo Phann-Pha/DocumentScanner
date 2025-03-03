@@ -17,15 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.pha.document.scanner.common.documentscanner.ui.components.ScanCanvasView
-        android:id="@+id/scanCanvasView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/viewFinder"
-        app:layout_constraintEnd_toEndOf="@id/viewFinder"
-        app:layout_constraintStart_toStartOf="@id/viewFinder"
-        app:layout_constraintTop_toTopOf="@id/viewFinder" />
-
     <View
         android:id="@+id/shapeOverlay"
         android:layout_width="0dp"

@@ -1,4 +1,4 @@
-package com.pha.document.scanner.common.documentscanner.ui.scan
+package com.pha.document.scanner.common.documentscanner.ui
 
 import android.app.Activity
 import android.graphics.Bitmap
@@ -14,10 +14,7 @@ import com.pha.document.scanner.common.documentscanner.common.extensions.show
 import com.pha.document.scanner.common.documentscanner.manager.DocumentSessionManager
 import com.pha.document.scanner.common.documentscanner.model.ErrorScannerModel
 import com.pha.document.scanner.common.documentscanner.model.ScannerResults
-import com.pha.document.scanner.common.documentscanner.ui.camerascreen.CameraScreenFragment
 import com.pha.document.scanner.common.documentscanner.ui.components.ProgressView
-import com.pha.document.scanner.common.documentscanner.ui.imagecrop.ImageCropFragment
-import com.pha.document.scanner.common.documentscanner.ui.imageprocessing.ImageProcessingFragment
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
@@ -75,20 +72,17 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     
     private fun showCameraScreen()
     {
-        val cameraScreenFragment = CameraScreenFragment.newInstance()
-        addFragmentToBackStack(cameraScreenFragment, CAMERA_SCREEN_FRAGMENT_TAG)
+        addFragmentToBackStack(CameraPreviewManager.newInstance(), CAMERA_SCREEN_FRAGMENT_TAG)
     }
     
-    internal fun showImageCropFragment()
+    internal fun showImageCropManagerScreen()
     {
-        val imageCropFragment = ImageCropFragment.newInstance()
-        addFragmentToBackStack(imageCropFragment, IMAGE_CROP_FRAGMENT_TAG)
+        addFragmentToBackStack(CroppingImageManager.newInstance(), IMAGE_CROP_FRAGMENT_TAG)
     }
     
-    internal fun showImageProcessingFragment()
+    internal fun showImageProcessingManagerScreen()
     {
-        val imageProcessingFragment = ImageProcessingFragment.newInstance()
-        addFragmentToBackStack(imageProcessingFragment, IMAGE_PROCESSING_FRAGMENT_TAG)
+        addFragmentToBackStack(ImageProcessingManager.newInstance(), IMAGE_PROCESSING_FRAGMENT_TAG)
     }
     
     internal fun closeCurrentFragment()
@@ -163,7 +157,7 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
         }
     }
     
-    internal fun addFragmentContentLayoutInternal()
+    internal fun addFragmentContentLayout()
     {
         val frameLayout = FrameLayout(activity)
         frameLayout.id = R.id.Content

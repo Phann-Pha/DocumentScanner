@@ -6,19 +6,13 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.pha.document.scanner.R
-import java.util.*
 
-internal class PolygonView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr)
+internal class PolygonView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr)
 {
     var paint: Paint = Paint()
     private var pointer1: ImageView
@@ -29,7 +23,6 @@ internal class PolygonView @JvmOverloads constructor(
     
     companion object
     {
-        private val TAG = PolygonView::class.simpleName
         private const val HALF = 2
         private const val THREE_PARTS = 3
     }
@@ -114,13 +107,16 @@ internal class PolygonView @JvmOverloads constructor(
             if (pointF.x < centerPoint.x && pointF.y < centerPoint.y)
             {
                 index = 0
-            } else if (pointF.x > centerPoint.x && pointF.y < centerPoint.y)
+            }
+            else if (pointF.x > centerPoint.x && pointF.y < centerPoint.y)
             {
                 index = 1
-            } else if (pointF.x < centerPoint.x && pointF.y > centerPoint.y)
+            }
+            else if (pointF.x < centerPoint.x && pointF.y > centerPoint.y)
             {
                 index = 2
-            } else if (pointF.x > centerPoint.x && pointF.y > centerPoint.y)
+            }
+            else if (pointF.x > centerPoint.x && pointF.y > centerPoint.y)
             {
                 index = 3
             }
@@ -145,10 +141,9 @@ internal class PolygonView @JvmOverloads constructor(
             pointer4.x = pointFMap.getValue(3).x - pointPadding
             pointer4.y = pointFMap.getValue(3).y - pointPadding
         }
-        catch (exception: NoSuchElementException)
+        catch (e: NoSuchElementException)
         {
-            // avoid crash if there is no point to add to image
-            Log.e(TAG, "", exception)
+            e.printStackTrace()
         }
     }
     

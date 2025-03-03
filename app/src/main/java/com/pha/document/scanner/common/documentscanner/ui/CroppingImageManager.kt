@@ -1,4 +1,4 @@
-package com.pha.document.scanner.common.documentscanner.ui.imagecrop
+package com.pha.document.scanner.common.documentscanner.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,65 +12,48 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.pha.document.scanner.R
 import com.pha.document.scanner.common.documentscanner.common.extensions.scaledBitmap
 import com.pha.document.scanner.common.documentscanner.common.utils.OpenCvNativeBridge
 import com.pha.document.scanner.common.documentscanner.model.ErrorScannerModel
-import com.pha.document.scanner.common.documentscanner.ui.base.BaseFragment
-import com.pha.document.scanner.common.documentscanner.ui.components.polygon.PolygonView
-import com.pha.document.scanner.common.documentscanner.ui.scan.BaseDocumentScannerActivity
+import com.pha.document.scanner.databinding.FragmentImageCropBinding
 import id.zelory.compressor.determineImageRotation
 
-internal class ImageCropFragment : BaseFragment()
+internal class CroppingImageManager : Fragment()
 {
+    private lateinit var binding: FragmentImageCropBinding
+    
     companion object
     {
-        fun newInstance(): ImageCropFragment
-        {
-            return ImageCropFragment()
-        }
+        fun newInstance(): CroppingImageManager = CroppingImageManager()
     }
     
     private val nativeClass = OpenCvNativeBridge()
-    
     private var selectedImage: Bitmap? = null
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
     {
-        return inflater.inflate(R.layout.fragment_image_crop, container, false)
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_image_crop, container, false)
+        return binding.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        
         val sourceBitmap = BitmapFactory.decodeFile(getScanActivity().originalImageFile.absolutePath)
         if (sourceBitmap != null)
         {
             selectedImage = determineImageRotation(getScanActivity().originalImageFile, sourceBitmap)
-        } else
+        }
+        else
         {
             onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_IMAGE))
-            Handler(Looper.getMainLooper()).post {
-                closeFragment()
-            }
+            Handler(Looper.getMainLooper()).post { closeFragment() }
         }
-        view.findViewById<FrameLayout>(R.id.holderImageView).post {
-            initializeCropping(view)
-        }
-        
-        initListeners(view)
-    }
-    
-    private fun initListeners(view: View)
-    {
-        view.findViewById<ImageView>(R.id.closeButton).setOnClickListener {
-            closeFragment()
-        }
-        view.findViewById<ImageView>(R.id.confirmButton).setOnClickListener {
-            onConfirmButtonClicked(view)
-        }
+        binding.holderImageView.post { initializeCropping() }
+        onInitEventClickListener()
     }
     
     private fun getScanActivity(): BaseDocumentScannerActivity
@@ -78,25 +61,38 @@ internal class ImageCropFragment : BaseFragment()
         return (requireActivity() as BaseDocumentScannerActivity)
     }
     
-    private fun initializeCropping(view: View)
+    private fun initializeCropping()
     {
+        fun getEdgePoints(tempBitmap: Bitmap): Map<Int, PointF>
+        {
+            val pointFs: List<PointF> = nativeClass.getContourEdgePoints(tempBitmap)
+            return binding.polygonView.getOrderedValidEdgePoints(tempBitmap, pointFs)
+        }
+        
         if (selectedImage != null && selectedImage!!.width > 0 && selectedImage!!.height > 0)
         {
-            val holderImageCrop = view.findViewById<FrameLayout>(R.id.holderImageCrop)
-            val imagePreview = view.findViewById<ImageView>(R.id.imagePreview)
-            val polygonView = view.findViewById<PolygonView>(R.id.polygonView)
+            val scaledBitmap: Bitmap = selectedImage!!.scaledBitmap(binding.holderImageCrop.width, binding.holderImageCrop.height)
+            binding.imagePreview.setImageBitmap(scaledBitmap)
+            val tempBitmap = (binding.imagePreview.drawable as BitmapDrawable).bitmap
+            val pointFs = getEdgePoints(tempBitmap)
             
-            val scaledBitmap: Bitmap = selectedImage!!.scaledBitmap(holderImageCrop.width, holderImageCrop.height)
-            imagePreview.setImageBitmap(scaledBitmap)
-            val tempBitmap = (imagePreview.drawable as BitmapDrawable).bitmap
-            val pointFs = getEdgePoints(polygonView, tempBitmap)
-            
-            polygonView.setPoints(pointFs)
-            polygonView.visibility = View.VISIBLE
+            binding.polygonView.setPoints(pointFs)
+            binding.polygonView.visibility = View.VISIBLE
             val padding = resources.getDimension(R.dimen.polygon_dimens).toInt()
             val layoutParams = FrameLayout.LayoutParams(tempBitmap.width + padding, tempBitmap.height + padding)
             layoutParams.gravity = Gravity.CENTER
-            polygonView.layoutParams = layoutParams
+            binding.polygonView.layoutParams = layoutParams
+        }
+    }
+    
+    private fun onInitEventClickListener()
+    {
+        binding.closeButton.setOnClickListener {
+            closeFragment()
+        }
+        binding.confirmButton.setOnClickListener {
+            onGetCroppedImage()
+            getScanActivity().showImageProcessingManagerScreen()
         }
     }
     
@@ -108,30 +104,15 @@ internal class ImageCropFragment : BaseFragment()
         }
     }
     
-    private fun onConfirmButtonClicked(view: View)
-    {
-        getCroppedImage(view)
-        startImageProcessingFragment()
-    }
-    
-    private fun getEdgePoints(polygonView: PolygonView, tempBitmap: Bitmap): Map<Int, PointF>
-    {
-        val pointFs: List<PointF> = nativeClass.getContourEdgePoints(tempBitmap)
-        return polygonView.getOrderedValidEdgePoints(tempBitmap, pointFs)
-    }
-    
-    private fun getCroppedImage(view: View)
+    private fun onGetCroppedImage()
     {
         if (selectedImage != null)
         {
             try
             {
-                val imagePreview = view.findViewById<ImageView>(R.id.imagePreview)
-                val polygonView = view.findViewById<PolygonView>(R.id.polygonView)
-                
-                val points: Map<Int, PointF> = polygonView.getPoints()
-                val xRatio: Float = selectedImage!!.width.toFloat() / imagePreview.width
-                val yRatio: Float = selectedImage!!.height.toFloat() / imagePreview.height
+                val points: Map<Int, PointF> = binding.polygonView.getPoints()
+                val xRatio: Float = selectedImage!!.width.toFloat() / binding.imagePreview.width
+                val yRatio: Float = selectedImage!!.height.toFloat() / binding.imagePreview.height
                 val pointPadding = requireContext().resources.getDimension(R.dimen.point_padding).toInt()
                 val x1: Float = (points.getValue(0).x + pointPadding) * xRatio
                 val x2: Float = (points.getValue(1).x + pointPadding) * xRatio
@@ -147,15 +128,11 @@ internal class ImageCropFragment : BaseFragment()
             {
                 onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.CROPPING_FAILED, e))
             }
-        } else
+        }
+        else
         {
             onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_IMAGE))
         }
-    }
-    
-    private fun startImageProcessingFragment()
-    {
-        getScanActivity().showImageProcessingFragment()
     }
     
     private fun closeFragment()

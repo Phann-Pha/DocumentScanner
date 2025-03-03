@@ -1,81 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
-    <FrameLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBar"
-        android:background="@color/black">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imagePreview"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"
-            android:contentDescription="@null" />
+            android:layout_above="@+id/bottomBar"
+            android:background="@color/black">
 
-    </FrameLayout>
+            <ImageView
+                android:id="@+id/imagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:contentDescription="@null" />
 
-    <RelativeLayout
-        android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white">
+        </FrameLayout>
 
-        <ImageView
-            android:id="@+id/closeButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:contentDescription="@null"
-            android:padding="10dp"
-            android:src="@drawable/icon_close" />
+        <RelativeLayout
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white">
 
-        <ImageView
-            android:id="@+id/magicButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="45dp"
-            android:layout_toEndOf="@+id/closeButton"
-            android:contentDescription="@null"
-            android:padding="10dp"
-            android:src="@drawable/magic_wand_icon"
+            <ImageView
+                android:id="@+id/closeButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:contentDescription="@null"
+                android:padding="10dp"
+                android:src="@drawable/icon_close" />
+
+            <ImageView
+                android:id="@+id/magicButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="45dp"
+                android:layout_toEndOf="@+id/closeButton"
+                android:contentDescription="@null"
+                android:padding="10dp"
+                android:src="@drawable/magic_wand_icon"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/rotateButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="45dp"
+                android:layout_toStartOf="@+id/confirmButton"
+                android:contentDescription="@null"
+                android:padding="8dp"
+                android:src="@drawable/rotation_icon"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/confirmButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:contentDescription="@null"
+                android:padding="8dp"
+                android:src="@drawable/tick_icon" />
+
+        </RelativeLayout>
+
+        <com.pha.document.scanner.common.documentscanner.ui.components.ProgressView
+            android:id="@+id/progressLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/rotateButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="45dp"
-            android:layout_toStartOf="@+id/confirmButton"
-            android:contentDescription="@null"
-            android:padding="8dp"
-            android:src="@drawable/rotation_icon"
-            android:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/confirmButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="20dp"
-            android:contentDescription="@null"
-            android:padding="8dp"
-            android:src="@drawable/tick_icon" />
-
     </RelativeLayout>
-
-    <com.pha.document.scanner.common.documentscanner.ui.components.ProgressView
-        android:id="@+id/progressLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-</RelativeLayout>
+</layout>

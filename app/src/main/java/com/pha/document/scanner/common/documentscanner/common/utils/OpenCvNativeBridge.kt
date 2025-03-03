@@ -5,7 +5,7 @@ import android.graphics.PointF
 import com.pha.document.scanner.common.documentscanner.common.extensions.scaleRectangle
 import com.pha.document.scanner.common.documentscanner.common.extensions.toBitmap
 import com.pha.document.scanner.common.documentscanner.common.extensions.toMat
-import com.pha.document.scanner.common.documentscanner.ui.components.Quadrilateral
+import com.pha.document.scanner.common.documentscanner.model.Quadrilateral
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import java.util.*
@@ -243,10 +243,5 @@ internal class OpenCvNativeBridge
         val point = MatOfPoint()
         point.fromList(points)
         return point
-    }
-    
-    fun contourArea(approx: MatOfPoint2f): Double
-    {
-        return Imgproc.contourArea(approx)
     }
 }
