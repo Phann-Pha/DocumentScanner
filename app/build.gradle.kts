@@ -63,6 +63,7 @@ dependencies {
     implementation("id.zelory:compressor:3.0.1")
     
     implementation("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
+    implementation("com.google.mlkit:object-detection:17.0.2")
     
     implementation("com.airbnb.android:lottie:6.6.3")
 }

@@ -3,6 +3,7 @@ package com.pha.document.scanner.common.liveness_detection.utils
 import android.graphics.PointF
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceLandmark
+import com.google.mlkit.vision.objects.DetectedObject
 import kotlin.math.acos
 import kotlin.math.sqrt
 
@@ -63,5 +64,30 @@ object DetectionUtils
             return false // unexpected face size: $fw x $fh
         }
         return true
+    }
+    
+    fun isObjectInDetectionRect(face: DetectedObject, detectionSize: Int): Boolean
+    {
+        val fRect = face.boundingBox
+        val fx = fRect.centerX()
+        val fy = fRect.centerY()
+        val gridSize = detectionSize / 8
+        if (fx < gridSize * 2 || fx > gridSize * 6 || fy < gridSize * 2 || fy > gridSize * 6)
+        {
+            return false // face center point is out of rect: ($fx, $fy)
+        }
+        
+        val fw = fRect.width()
+        val fh = fRect.height()
+        if (fw < gridSize * 3 || fw > gridSize * 6 || fh < gridSize * 3 || fh > gridSize * 6)
+        {
+            return false // unexpected face size: $fw x $fh
+        }
+        return true
+    }
+    
+    fun isObjecting(face: DetectedObject): Boolean
+    {
+        return false
     }
 }
