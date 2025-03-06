@@ -33,3 +33,14 @@ internal fun Bitmap.scaledBitmap(width: Int, height: Int): Bitmap
     )
     return Bitmap.createBitmap(this, 0, 0, this.width, this.height, m, true)
 }
+
+internal fun Bitmap.scaledCipherTextBitmap(width: Int, height: Int): Bitmap
+{
+    val m = Matrix()
+    m.setRectToRect(
+        RectF(0f, 0f, this.width.toFloat(), this.height.toFloat()),
+        RectF(0f, 0f, width.toFloat(), height.toFloat()),
+        Matrix.ScaleToFit.CENTER
+    )
+    return Bitmap.createBitmap(this, 0, (this.height / 2) + 40, this.width, (this.height / 2) - 40, m, true)
+}

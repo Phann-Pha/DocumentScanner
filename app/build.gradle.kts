@@ -66,4 +66,11 @@ dependencies {
     implementation("com.google.mlkit:object-detection:17.0.2")
     
     implementation("com.airbnb.android:lottie:6.6.3")
+    
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
+    
+    // text detection
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition-common:19.1.0")
+    implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 }

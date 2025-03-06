@@ -2,6 +2,7 @@ package com.pha.document.scanner
 
 import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import com.pha.document.scanner.common.documentscanner.model.ErrorScannerModel
@@ -24,7 +25,7 @@ class MainActivity : BaseDocumentScannerActivity()
     
     override fun onError(error: ErrorScannerModel)
     {
-    
+        Toast.makeText(activity, "${error.message}", Toast.LENGTH_SHORT).show()
     }
     
     override fun onSuccess(scannerResults: ScannerResults)

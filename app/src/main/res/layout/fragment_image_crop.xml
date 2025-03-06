@@ -18,8 +18,8 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center">
 
-                <ImageView
-                    android:id="@+id/imagePreview"
+                <com.canhub.cropper.CropImageView
+                    android:id="@+id/CropImagePreview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -28,11 +28,11 @@
 
             </FrameLayout>
 
-            <com.pha.document.scanner.common.documentscanner.ui.components.polygon.PolygonView
+            <!--<com.pha.document.scanner.common.documentscanner.ui.components.polygon.PolygonView
                 android:id="@+id/polygonView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone" />
+                android:visibility="gone" />-->
 
         </FrameLayout>
 

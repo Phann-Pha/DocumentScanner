@@ -2,17 +2,27 @@ package com.pha.document.scanner.common.documentscanner.ui
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.createBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.pha.document.scanner.R
 import com.pha.document.scanner.common.documentscanner.common.extensions.hide
+import com.pha.document.scanner.common.documentscanner.common.extensions.scaledCipherTextBitmap
 import com.pha.document.scanner.common.documentscanner.common.extensions.show
+import com.pha.document.scanner.common.documentscanner.common.utils.getRawValue
+import com.pha.document.scanner.common.documentscanner.common.utils.strippingWhiteSpace
 import com.pha.document.scanner.common.documentscanner.manager.DocumentSessionManager
 import com.pha.document.scanner.common.documentscanner.model.ErrorScannerModel
+import com.pha.document.scanner.common.documentscanner.model.MrzHelper
 import com.pha.document.scanner.common.documentscanner.model.ScannerResults
 import com.pha.document.scanner.common.documentscanner.ui.components.ProgressView
 import id.zelory.compressor.Compressor
@@ -38,7 +48,6 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     {
         internal const val CAMERA_SCREEN_FRAGMENT_TAG = "CameraScreenFragmentTag"
         internal const val IMAGE_CROP_FRAGMENT_TAG = "ImageCropFragmentTag"
-        internal const val IMAGE_PROCESSING_FRAGMENT_TAG = "ImageProcessingFragmentTag"
         internal const val ORIGINAL_IMAGE_NAME = "original"
         internal const val CROPPED_IMAGE_NAME = "cropped"
         internal const val TRANSFORMED_IMAGE_NAME = "transformed"
@@ -79,11 +88,6 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
     internal fun showImageCropManagerScreen()
     {
         addFragmentToBackStack(CroppingImageManager.newInstance(), IMAGE_CROP_FRAGMENT_TAG)
-    }
-    
-    internal fun showImageProcessingManagerScreen()
-    {
-        addFragmentToBackStack(ImageProcessingManager.newInstance(), IMAGE_PROCESSING_FRAGMENT_TAG)
     }
     
     internal fun closeCurrentFragment()
@@ -152,8 +156,8 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
                 findViewById<ProgressView>(R.id.ProgressView).hide()
                 shouldCallOnClose = false
                 supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                onAnalyzeDocument(scannerResults)
                 shouldCallOnClose = true
-                onSuccess(scannerResults)
             }
         }
     }
@@ -170,5 +174,48 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
         
         progressView.hide()
         showCameraScreen()
+    }
+    
+    private fun onAnalyzeDocument(scannerResults: ScannerResults)
+    {
+        val sourceBitmap = BitmapFactory.decodeFile(scannerResults.croppedImageFile?.absolutePath)
+        if (sourceBitmap != null)
+        {
+            val bitmap = sourceBitmap.scaledCipherTextBitmap(sourceBitmap.width, sourceBitmap.height)
+            val image = InputImage.fromBitmap(bitmap, 0)
+            val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            textRecognizer.process(image)
+                    .addOnSuccessListener {
+                        val rawValue = it.textBlocks
+                        val cipher = strippingWhiteSpace(getRawValue(rawValue))
+                        val helper = MrzHelper()
+                        val mrz = helper.process(cipher)
+                        
+                        Log.d("MRZ_CODE", "scanTextFromImage: ${cipher}, ${mrz?.getMRZType()}")
+                        
+                        if (mrz?.getMRZType() == "TD1" || mrz?.getMRZType() == "TD3")
+                        {
+                            onSuccess(scannerResults)
+                        }
+                        else if (cipher.startsWith("IDKHM", true))
+                        {
+                            onSuccess(scannerResults)
+                            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.MAYBE_NATIONALITY_CARD))
+                        }
+                        else
+                        {
+                            onSuccess(scannerResults)
+                            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_NATIONALITY_CARD))
+                        }
+                    }
+                    .addOnFailureListener {
+                        onSuccess(scannerResults)
+                        onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.ERROR_RECOGNIZE_ID_CARD))
+                    }
+        }
+        else
+        {
+            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_IMAGE))
+        }
     }
 }
