@@ -14,8 +14,8 @@ data class ErrorScannerModel(var message: ErrorMessage? = null, var throwable: T
         STORAGE_PERMISSION_REFUSED_WITHOUT_NEVER_ASK_AGAIN,
         STORAGE_PERMISSION_REFUSED_GO_TO_SETTINGS,
         CROPPING_FAILED,
-        ERROR_RECOGNIZE_ID_CARD,
-        INVALID_NATIONALITY_CARD,
-        MAYBE_NATIONALITY_CARD,
+        ERROR_RECOGNIZE,
+        INVALID_DOCUMENT,
+        NATIONALITY_CARD,
     }
 }

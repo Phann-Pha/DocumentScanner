@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.createBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -191,8 +190,6 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
                         val helper = MrzHelper()
                         val mrz = helper.process(cipher)
                         
-                        Log.d("MRZ_CODE", "scanTextFromImage: ${cipher}, ${mrz?.getMRZType()}")
-                        
                         if (mrz?.getMRZType() == "TD1" || mrz?.getMRZType() == "TD3")
                         {
                             onSuccess(scannerResults)
@@ -200,17 +197,17 @@ abstract class BaseDocumentScannerActivity : AppCompatActivity()
                         else if (cipher.startsWith("IDKHM", true))
                         {
                             onSuccess(scannerResults)
-                            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.MAYBE_NATIONALITY_CARD))
+                            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.NATIONALITY_CARD))
                         }
                         else
                         {
                             onSuccess(scannerResults)
-                            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_NATIONALITY_CARD))
+                            onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.INVALID_DOCUMENT))
                         }
                     }
                     .addOnFailureListener {
                         onSuccess(scannerResults)
-                        onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.ERROR_RECOGNIZE_ID_CARD))
+                        onError(ErrorScannerModel(ErrorScannerModel.ErrorMessage.ERROR_RECOGNIZE))
                     }
         }
         else

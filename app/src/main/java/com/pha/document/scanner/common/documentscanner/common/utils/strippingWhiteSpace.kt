@@ -11,7 +11,6 @@ fun strippingWhiteSpace(mrz: String): String
     fixedString = fixedString.replace(")", "")
     fixedString = fixedString.replace("\t", "")
     fixedString = fixedString.replace("«", "<")
-    fixedString = fixedString.replace("IDKHM", "\nIDKHM")
     return fixedString
 }
 
