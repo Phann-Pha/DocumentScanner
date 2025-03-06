@@ -2,6 +2,7 @@ package com.pha.document.scanner.common.liveness_detection.tasks
 
 import com.google.mlkit.vision.face.Face
 import com.pha.document.scanner.common.liveness_detection.utils.DetectionUtils
+import com.pha.document.scanner.common.liveness_detection.utils.LiveDetectionTask
 
 class SmileDetectionTask : DetectionTask
 {
@@ -9,7 +10,7 @@ class SmileDetectionTask : DetectionTask
     
     override fun taskName(): String
     {
-        return "SmileDetection"
+        return LiveDetectionTask.SMILE_DETECTION
     }
     
     override fun taskDescription(): String

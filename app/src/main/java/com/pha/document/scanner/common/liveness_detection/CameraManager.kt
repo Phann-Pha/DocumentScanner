@@ -61,6 +61,11 @@ class CameraManager(
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
     
+    fun pause()
+    {
+        cameraProvider?.unbindAll()
+    }
+    
     fun start()
     {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
@@ -94,7 +99,7 @@ class CameraManager(
         try
         {
             cameraProvider?.unbindAll()
-            camera?.cameraControl?.enableTorch(true)
+            camera?.cameraControl?.enableTorch(false)
             camera = cameraProvider?.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalyzer, imageCapture)
             preview?.surfaceProvider = viewFinder.surfaceProvider
         }

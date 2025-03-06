@@ -2,6 +2,7 @@ package com.pha.document.scanner.common.liveness_detection.tasks
 
 import com.google.mlkit.vision.face.Face
 import com.pha.document.scanner.common.liveness_detection.utils.DetectionUtils
+import com.pha.document.scanner.common.liveness_detection.utils.LiveDetectionTask
 
 class FacingDetectionTask : DetectionTask
 {
@@ -14,7 +15,7 @@ class FacingDetectionTask : DetectionTask
     
     override fun taskName(): String
     {
-        return "FacingDetection"
+        return LiveDetectionTask.FACING_DETECTION
     }
     
     override fun taskDescription(): String

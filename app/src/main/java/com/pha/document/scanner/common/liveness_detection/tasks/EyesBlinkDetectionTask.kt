@@ -2,13 +2,14 @@ package com.pha.document.scanner.common.liveness_detection.tasks
 
 import com.google.mlkit.vision.face.Face
 import com.pha.document.scanner.common.liveness_detection.utils.DetectionUtils
+import com.pha.document.scanner.common.liveness_detection.utils.LiveDetectionTask
 import kotlin.math.absoluteValue
 
 class EyesBlinkDetectionTask : DetectionTask
 {
     private var timestamp: Long = 0L
     private var trackingId: Int = -1
-    private var eyesOpen: Float = 0.7f
+    private var eyesOpen: Float = 0.6f
     private var eyesClose: Float = 0.3f
     private var leftEyeOpenProbabilityList: MutableList<Float> = arrayListOf()
     private var rightEyeOpenProbabilityList: MutableList<Float> = arrayListOf()
@@ -18,7 +19,7 @@ class EyesBlinkDetectionTask : DetectionTask
     
     override fun taskName(): String
     {
-        return "EyesBlinkDetection"
+        return LiveDetectionTask.BLINK_EYES_DETECTION
     }
     
     override fun taskDescription(): String
