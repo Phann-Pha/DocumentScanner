@@ -23,6 +23,7 @@ interface DetectionTask
     
     fun start()
     {
+    
     }
     
     /**
