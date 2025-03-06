@@ -42,5 +42,5 @@ internal fun Bitmap.scaledCipherTextBitmap(width: Int, height: Int): Bitmap
         RectF(0f, 0f, width.toFloat(), height.toFloat()),
         Matrix.ScaleToFit.CENTER
     )
-    return Bitmap.createBitmap(this, 0, (this.height / 2) + 40, this.width, (this.height / 2) - 40, m, true)
+    return Bitmap.createBitmap(this, 0, (this.height / 2) + 50, this.width, (this.height / 2) - 50, m, true)
 }
