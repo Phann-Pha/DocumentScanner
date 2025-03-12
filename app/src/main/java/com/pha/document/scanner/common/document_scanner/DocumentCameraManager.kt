@@ -191,7 +191,6 @@ class DocumentCameraManager(
                             mImageDir.mkdirs()
                         }
                         callback.invoke(fileName, mImageDir)
-                        
                     }
                     catch (e: Exception)
                     {
@@ -219,10 +218,7 @@ class DocumentCameraManager(
         }
         else
         {
-            moveImageFile(
-                File(context.externalCacheDirs[0], child),
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), child)
-            )
+            moveImageFile(File(context.externalCacheDirs[0], child), File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), child))
             val fileDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), child)
             if (!fileDir.exists())
             {

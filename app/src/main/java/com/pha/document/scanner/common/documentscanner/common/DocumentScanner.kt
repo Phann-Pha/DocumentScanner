@@ -30,6 +30,4 @@ object DocumentScanner
             e.printStackTrace()
         }
     }
-    
-    
 }
