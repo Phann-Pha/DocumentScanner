@@ -9,6 +9,7 @@ import com.domain.document.scanner.documentscanner.core.config.ScanResultHandler
 import com.domain.document.scanner.documentscanner.core.manager.DocumentScannerManager
 import com.domain.document.scanner.documentscanner.core.options.DocumentScannerOptions
 import com.domain.document.scanner.documentscanner.permission.PermissionUtil
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,8 +48,8 @@ class MainActivity : AppCompatActivity() {
     private fun initEventClick() {
         binding.capture.setOnClickListener {
             documentScanner.capture(result = object : ScanResultHandler {
-                override fun onPageCaptured(path: String) {
-                    list.add(element = path)
+                override fun onPageCaptured(file: File) {
+                    list.add(element = file.path)
                     Toast.makeText(this@MainActivity, "$list", Toast.LENGTH_SHORT).show()
                 }
             })

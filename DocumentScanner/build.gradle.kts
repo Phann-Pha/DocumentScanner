@@ -42,4 +42,6 @@ dependencies {
     api(libs.androidx.camera.camera2)
     api(libs.androidx.camera.lifecycle)
     api(libs.androidx.camera.view)
+    implementation(libs.androidx.exifinterface)
+
 }
