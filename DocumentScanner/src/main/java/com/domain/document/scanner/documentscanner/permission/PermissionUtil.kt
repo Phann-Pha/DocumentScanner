@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.domain.document.scanner.documentscanner.exceptions.DocumentScannerException
 
 object PermissionUtil {
     fun checkCameraSelfPermission(context: Activity, startCamera: () -> (Unit)) {
@@ -20,8 +19,6 @@ object PermissionUtil {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted(context)) {
                 startCamera()
-            } else {
-                throw DocumentScannerException("Required Camera Permission.")
             }
         }
     }

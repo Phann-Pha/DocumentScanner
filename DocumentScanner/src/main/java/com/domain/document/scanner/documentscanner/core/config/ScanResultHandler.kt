@@ -1,8 +1,9 @@
 package com.domain.document.scanner.documentscanner.core.config
 
+import java.io.File
+
 interface ScanResultHandler {
-
-    fun onPageCaptured(path: String) {
-
+    fun onPageCaptured(file: File) {
+        // return file
     }
 }
